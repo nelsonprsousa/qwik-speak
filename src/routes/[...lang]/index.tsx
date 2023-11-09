@@ -1,5 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
-import type { DocumentHead } from '@builder.io/qwik-city';
+import { routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
 import {
   Speak,
   inlineTranslate,
@@ -12,6 +12,12 @@ import {
   useTranslate
 } from 'qwik-speak';
 import type { SpeakState } from 'qwik-speak';
+import { usePageContextLoader } from '../layout';
+
+
+// export const usePageContextLoader = routeLoader$(({ sharedMap }) => {
+//   return sharedMap.get('pageContext') as string[];
+// });
 
 interface TitleProps {
   name: string;
@@ -31,6 +37,7 @@ export const Home = component$(() => {
   const fd = useFormatDate();
   const rt = useRelativeTime();
   const fn = useFormatNumber();
+  const pageContextSignal = usePageContextLoader();
 
   const ctx = useSpeakContext();
   const locale = useSpeakLocale();
@@ -41,11 +48,18 @@ export const Home = component$(() => {
   // Prefer translating inside components rather than on props
   const title = t('app.title');
 
+  console.log('Home called')
+
   return (
     <div class="content">
       <Title name={title} />
 
       <SubTitle ctx={ctx} />
+
+      
+      {pageContextSignal.value.map(dummyStr => {
+        return (<p key={dummyStr}>{dummyStr}</p>);
+      })}
 
       <h3>{t('home.params')}</h3>
       <p>{t('home.greeting', { name: 'Qwik Speak' })}</p>

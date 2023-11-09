@@ -1,21 +1,38 @@
 import { component$ } from '@builder.io/qwik';
-import type { DocumentHead } from '@builder.io/qwik-city';
+import { routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
 import { Speak, useTranslate } from 'qwik-speak';
+import { usePageContextLoader } from '~/routes/layout';
+
+
+// export const usePageContextLoader = routeLoader$(({ sharedMap }) => {
+//   return sharedMap.get('pageContext') as string[];
+// });
 
 export const Page = component$(() => {
   const t = useTranslate();
+  const pageContextSignal = usePageContextLoader();
 
   const key = 'dynamic';
 
-  return (
-    <div class="content">
-      <h1>{t('app.title')}</h1>
-      <h2>{t('app.subtitle')}</h2>
+  console.log('Page called')
 
-      <p>{t('page.text')}</p>
-      <p>{t('page.default@@I\'m a default value')}</p>
-      <p>{t(`runtimePage.${key}`)}</p>
-    </div>
+  return (
+    <>
+      <div class="content">
+        <h1>{t('app.title')}</h1>
+        <h2>{t('app.subtitle')}</h2>
+
+        <p>{t('page.text')}</p>
+        <p>{t('page.default@@I\'m a default value')}</p>
+        <p>{t(`runtimePage.${key}`)}</p>
+      </div>
+
+      <br/>
+
+      {pageContextSignal.value.map(dummyStr => {
+        return (<p key={dummyStr}>{dummyStr}</p>);
+      })}
+    </>
   );
 });
 
